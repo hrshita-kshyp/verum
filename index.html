@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verum — An outreach agent that only sends what it can prove</title>
+<meta name="description" content="An autonomous AI outreach agent that only sends what it can prove — a real person, a dated reason, and a source for every claim. Coming soon, currently proving itself on Ranuvo.">
+<meta name="theme-color" content="#F1F3EE">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Verum">
+<meta property="og:description" content="An outreach agent that only sends what it can prove — a real person, a dated reason, and a source for every claim.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Verum">
+<meta name="twitter:description" content="An outreach agent that only sends what it can prove.">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%BE%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper: #F1F3EE;
+    --surface: #FFFFFF;
+    --surface-2: #E9ECE5;
+    --ink: #14181B;
+    --ink-soft: #52585A;
+    --ink-faint: #868C86;
+    --line: #D7DBD1;
+    --accent: #24399C;
+    --accent-soft: #E7EAF7;
+    --pass: #2F6D4F;
+    --pass-soft: #E3EEE7;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14161A;
+      --surface: #1B1E22;
+      --surface-2: #22262B;
+      --ink: #ECEEEA;
+      --ink-soft: #ABB1AA;
+      --ink-faint: #6F756F;
+      --line: #2C3136;
+      --accent: #8398E8;
+      --accent-soft: #232A52;
+      --pass: #6FBF95;
+      --pass-soft: #1E332A;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    padding-inline: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding-block: 56px 40px; }
+
+  .display { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+  a { color: var(--accent); }
+
+  /* ---------- Hero ---------- */
+  .eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 22px;
+  }
+  .eyebrow .rule { flex: 1; height: 1px; background: var(--line); }
+
+  .stamp {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--accent); color: var(--accent);
+    padding: 5px 10px; font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; border-radius: 3px; white-space: nowrap;
+  }
+  .stamp .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+
+  .wordmark {
+    font-size: clamp(48px, 11vw, 84px);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    margin: 18px 0 20px;
+  }
+
+  .subhead {
+    font-size: clamp(18px, 2.6vw, 21px);
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin-bottom: 10px;
+  }
+
+  .byline {
+    font-size: 14px; color: var(--ink-faint); margin-top: 18px;
+  }
+  .byline strong { color: var(--ink-soft); font-weight: 600; }
+
+  /* ---------- Stat strip ---------- */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-block: 48px 8px;
+  }
+  .stat {
+    background: var(--surface);
+    padding: 22px 18px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat .n {
+    font-size: clamp(26px, 5vw, 34px);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .stat .l {
+    font-size: 12.5px; color: var(--ink-soft); line-height: 1.35;
+  }
+  .stats-note {
+    font-size: 12.5px; color: var(--ink-faint); margin-bottom: 56px;
+  }
+
+  /* ---------- Sections ---------- */
+  section { margin-block: 64px; }
+  section > .kicker {
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px; font-weight: 600;
+  }
+  section > h2 {
+    font-size: clamp(24px, 4vw, 30px);
+    font-weight: 600;
+    max-width: 30ch;
+    margin-bottom: 14px;
+  }
+  section > .lede {
+    color: var(--ink-soft); max-width: 62ch; font-size: 15.5px;
+  }
+
+  /* ---------- Pipeline ---------- */
+  .pipeline { margin-top: 30px; display: flex; flex-direction: column; }
+  .step {
+    display: grid; grid-template-columns: 44px 1fr; gap: 16px;
+    padding-block: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .step:last-child { border-bottom: 1px solid var(--line); }
+  .step .num {
+    font-size: 13px; color: var(--ink-faint); padding-top: 2px;
+  }
+  .step .name {
+    font-weight: 600; font-size: 15.5px; margin-bottom: 3px;
+  }
+  .step .desc { color: var(--ink-soft); font-size: 14.5px; max-width: 58ch; }
+
+  /* ---------- Diagram ---------- */
+  figure.diagram { margin: 32px 0 0; }
+  .diagram-frame {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 20px 14px 16px;
+    overflow-x: auto;
+  }
+  .diagram-frame svg { display: block; margin: 0 auto; max-width: 100%; height: auto; min-width: 560px; }
+  figcaption {
+    font-size: 13.5px; color: var(--ink-faint); margin-top: 12px; max-width: 60ch;
+  }
+
+  /* ---------- Principles ---------- */
+  .principles { display: flex; flex-direction: column; gap: 0; margin-top: 28px; }
+  .principle {
+    display: grid; grid-template-columns: 20px 1fr; gap: 14px;
+    padding-block: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .principle:last-child { border-bottom: 1px solid var(--line); }
+  .principle .mark { color: var(--pass); font-size: 15px; padding-top: 2px; }
+  .principle .t { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .principle .d { color: var(--ink-soft); font-size: 14.5px; max-width: 58ch; }
+
+  /* ---------- Status board ---------- */
+  .board {
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 22px 20px; margin-top: 28px;
+  }
+  .board-row {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding-block: 9px; font-size: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .board-row:last-child { border-bottom: none; }
+  .board-row .k { color: var(--ink-soft); }
+  .board-row .v { font-size: 13px; color: var(--ink); text-align: right; }
+  .pill {
+    display: inline-block; font-size: 11px; letter-spacing: 0.06em;
+    padding: 2px 7px; border-radius: 3px;
+    background: var(--pass-soft); color: var(--pass);
+  }
+
+  /* ---------- Footer / contact ---------- */
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 32px; margin-top: 72px; padding-bottom: 40px;
+  }
+  .contact-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    margin-bottom: 22px;
+  }
+  .email-chip {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--line); background: var(--surface);
+    padding: 9px 12px; font-size: 13.5px;
+  }
+  .email-chip a { color: var(--ink); text-decoration: none; }
+  .email-chip a:hover { color: var(--accent); }
+  .copy-btn {
+    font-family: inherit; font-size: 12px; letter-spacing: 0.04em;
+    background: var(--accent-soft); color: var(--accent);
+    border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer;
+  }
+  .copy-btn:hover { filter: brightness(0.96); }
+  .copy-btn:focus-visible, a:focus-visible, .stamp:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .foot-note {
+    font-size: 13px; color: var(--ink-faint); max-width: 56ch;
+  }
+  .foot-note + .foot-note { margin-top: 8px; }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; }
+    .step, .principle { grid-template-columns: 28px 1fr; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fade-in { animation: fadeIn 0.5s ease-out both; }
+    .fade-in.d1 { animation-delay: 0.06s; }
+    .fade-in.d2 { animation-delay: 0.12s; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="eyebrow fade-in">
+    <span class="mono">AN OUTREACH AGENT</span>
+    <span class="rule"></span>
+    <span class="mono">BUILD LOG 001</span>
+  </div>
+
+  <div class="stamp fade-in d1"><span class="dot"></span> Coming soon</div>
+
+  <h1 class="wordmark display fade-in d2">Verum</h1>
+
+  <p class="subhead">
+    An outreach agent that only sends what it can prove — a real person,
+    a dated reason to write, and a source for every fact in the email.
+  </p>
+
+  <p class="byline">
+    Built by <strong>Harshita Kashyap</strong>. Currently proving itself on
+    <a href="https://ranuvo.tech">Ranuvo</a> before anyone else runs it.
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="n mono">157</div>
+      <div class="l">companies evaluated so far</div>
+    </div>
+    <div class="stat">
+      <div class="n mono">11</div>
+      <div class="l">checks a lead has to pass, in order</div>
+    </div>
+    <div class="stat">
+      <div class="n mono">18%</div>
+      <div class="l">cleared every one of them</div>
+    </div>
+  </div>
+  <p class="stats-note">Figures from the live run against Ranuvo, updated as it works.</p>
+
+  <section>
+    <div class="kicker">What it does</div>
+    <h2>Five steps, and it will skip any of them rather than guess.</h2>
+    <div class="pipeline">
+      <div class="step">
+        <div class="num mono">01</div>
+        <div>
+          <div class="name">Research</div>
+          <div class="desc">Reads a company's own site, its filings and recent coverage. Never a data broker, never a scraped list.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num mono">02</div>
+        <div>
+          <div class="name">Verify</div>
+          <div class="desc">Eleven checks: a named decision-maker, a route to them published by the company itself, a dated reason to write now, nothing that contradicts what's being claimed.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num mono">03</div>
+        <div>
+          <div class="name">Write</div>
+          <div class="desc">A short email built only from sourced facts, phrased as a question rather than an assertion about a problem no one confirmed.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num mono">04</div>
+        <div>
+          <div class="name">Send</div>
+          <div class="desc">Inside the recipient's own business hours, spaced apart, inside that country's own consent rules — five jurisdictions handled differently, on purpose.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num mono">05</div>
+        <div>
+          <div class="name">Log</div>
+          <div class="desc">Every decision is recorded, including the four in five leads it declined to send — so the bar it holds never quietly slips.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">How it runs unattended</div>
+    <h2>It forgets everything between runs, on purpose.</h2>
+    <p class="lede">
+      Each scheduled run is a disposable cloud session with no memory of its own.
+      Everything it knows about what's already been sent, held or refused lives on
+      one git branch — pulled in at the start of a run, pushed back before the
+      session is destroyed.
+    </p>
+
+    <figure class="diagram">
+      <div class="diagram-frame">
+        <svg viewBox="0 0 860 300" role="img" aria-label="Diagram: a scheduled cloud session starts with no memory, pulls state from a git branch, runs its checks, writes a decision, pushes state back, and is destroyed. The git branch persists between sessions and is pulled by the next one." xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+            </marker>
+          </defs>
+          <g fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85">
+            <line x1="40" y1="255" x2="820" y2="255" stroke-dasharray="1 0" stroke-width="1.6" />
+          </g>
+          <text x="40" y="278" class="mono" font-size="11.5" fill="currentColor" opacity="0.65">git branch · claude/outreach-state</text>
+          <text x="700" y="278" class="mono" font-size="11.5" fill="currentColor" opacity="0.65" text-anchor="end">persists indefinitely</text>
+
+          <rect x="60" y="40" width="230" height="150" fill="none" stroke="currentColor" stroke-width="1.4" rx="2" />
+          <text x="175" y="30" text-anchor="middle" class="mono" font-size="12" fill="currentColor">SESSION · 14:30 IST</text>
+          <text x="175" y="65" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Spins up</text>
+          <text x="175" y="82" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">no memory</text>
+
+          <line x1="175" y1="95" x2="175" y2="120" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" />
+          <text x="185" y="110" font-size="11" fill="currentColor" opacity="0.8">runs 11 checks</text>
+
+          <text x="175" y="150" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Decides</text>
+          <text x="175" y="167" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">send · hold · skip</text>
+
+          <line x1="175" y1="190" x2="175" y2="248" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" />
+
+          <line x1="105" y1="248" x2="105" y2="192" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" />
+          <text x="60" y="222" font-size="10.5" fill="currentColor" opacity="0.75">pull</text>
+          <text x="195" y="222" font-size="10.5" fill="currentColor" opacity="0.75">push</text>
+
+          <rect x="60" y="200" width="230" height="26" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.55" />
+          <text x="175" y="217" text-anchor="middle" class="mono" font-size="10.5" fill="currentColor" opacity="0.65">session destroyed</text>
+
+          <line x1="290" y1="255" x2="560" y2="255" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" opacity="0.8" />
+          <text x="425" y="245" text-anchor="middle" class="mono" font-size="10.5" fill="currentColor" opacity="0.7">≈4.5 hours, nothing running</text>
+
+          <rect x="560" y="40" width="230" height="150" fill="none" stroke="currentColor" stroke-width="1.4" rx="2" />
+          <text x="675" y="30" text-anchor="middle" class="mono" font-size="12" fill="currentColor">SESSION · 19:00 IST</text>
+          <text x="675" y="65" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Spins up</text>
+          <text x="675" y="82" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">reads yesterday's decisions</text>
+
+          <line x1="675" y1="95" x2="675" y2="120" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" />
+          <text x="685" y="110" font-size="11" fill="currentColor" opacity="0.8">runs 11 checks</text>
+
+          <text x="675" y="150" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">Decides</text>
+          <text x="675" y="167" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">send · hold · skip</text>
+
+          <rect x="560" y="200" width="230" height="26" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.55" />
+          <text x="675" y="217" text-anchor="middle" class="mono" font-size="10.5" fill="currentColor" opacity="0.65">session destroyed</text>
+
+          <line x1="605" y1="248" x2="605" y2="192" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" />
+          <line x1="675" y1="190" x2="675" y2="248" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow)" />
+          <text x="560" y="222" font-size="10.5" fill="currentColor" opacity="0.75">pull</text>
+          <text x="695" y="222" font-size="10.5" fill="currentColor" opacity="0.75">push</text>
+        </svg>
+      </div>
+      <figcaption>
+        Two scheduled runs, hours apart. Neither session remembers the other —
+        the git branch in between is the only thing that does. Restart the
+        schedule, change the model, move it to a different machine, and it
+        picks up exactly where it left off.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="kicker">Working principles</div>
+    <h2>The rules it can't argue itself out of.</h2>
+    <div class="principles">
+      <div class="principle">
+        <div class="mark">✓</div>
+        <div>
+          <div class="t">A fact needs a source</div>
+          <div class="d">Every claim in a sent email traces to a URL in the log. No source, no sentence.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="mark">✓</div>
+        <div>
+          <div class="t">An address is never guessed</div>
+          <div class="d">If a company hides its email, the lead waits for a person. It is never pattern-guessed from a name.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="mark">✓</div>
+        <div>
+          <div class="t">One bounce throttles everything</div>
+          <div class="d">A single bad address automatically drops the day's send limit — no one has to notice and intervene.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="mark">✓</div>
+        <div>
+          <div class="t">Replies are read, never answered</div>
+          <div class="d">It classifies an inbound reply and drafts a response. A person decides whether it actually goes out.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <div class="mark">✓</div>
+        <div>
+          <div class="t">Zero is a good result</div>
+          <div class="d">A day with nothing sent means nothing cleared the bar — not that the bar moved to make room.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Right now</div>
+    <h2>Status</h2>
+    <div class="board mono">
+      <div class="board-row"><span class="k">Stage</span><span class="v"><span class="pill">dogfooding on ranuvo.tech</span></span></div>
+      <div class="board-row"><span class="k">Sending</span><span class="v">2 scheduled runs / weekday</span></div>
+      <div class="board-row"><span class="k">Open to other teams</span><span class="v">not yet</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="contact-row">
+      <div class="email-chip mono">
+        <a href="mailto:harshita@ranuvo.tech">harshita@ranuvo.tech</a>
+        <button class="copy-btn" id="copyBtn" type="button">Copy</button>
+      </div>
+    </div>
+    <p class="foot-note">
+      Verum isn't open to other teams yet — it's still earning that on Ranuvo's
+      own outreach first. If you want to talk about it, the address above reaches
+      the person building it.
+    </p>
+    <p class="foot-note">© 2026 Harshita Kashyap. Built in the open, on a real mailbox.</p>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    if (!btn) return;
+    var email = 'harshita@ranuvo.tech';
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      function fallback() {
+        try {
+          var r = document.createRange();
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          r.selectNodeContents(btn.parentElement);
+          sel.addRange(r);
+        } catch (err) {}
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(function () {
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+        }).catch(function () {
+          fallback();
+          btn.textContent = 'Select & copy';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
+        });
+      } else {
+        fallback();
+        btn.textContent = 'Select & copy';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
